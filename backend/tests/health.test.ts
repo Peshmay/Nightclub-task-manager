@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../src/index";
+import app from "../src/app";
 
 describe("health endpoint", () => {
   it("returns ok", async () => {
