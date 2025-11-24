@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use("/api", router);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4001;
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

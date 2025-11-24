@@ -169,7 +169,7 @@ router.post("/messages", (req, res) => {
 router.post("/messages/clear-all", (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
-  db.clearAllMessages(parse.data.workspaceId);
+  db.clearMessages(parse.data.workspaceId);
   res.json({ ok: true });
 });
 

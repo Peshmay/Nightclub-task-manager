@@ -137,8 +137,8 @@ export class Database {
     this.messages.set(workspaceId, workspaceMessages);
   }
 
-  clearAllMessages(workspaceId: string): void {
-    this.messages.set(workspaceId, []);
+  clearMessages(workspaceId: string) {
+    this.messages.delete(workspaceId);
   }
 
   getSettings(workspaceId: string): AppSettings {
