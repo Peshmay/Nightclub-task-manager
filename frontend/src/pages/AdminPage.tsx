@@ -490,12 +490,14 @@ const AdminPage: React.FC = () => {
                       </div>
                     </div>
                   );
-
-                return (
-                  <div
-                    key={station.id}
-                    className="bg-[#1a1a2e]/90 border border-white/10 rounded-2xl px-4 py-4 space-y-3"
-                  >
+return (
+  <div
+    key={station.id}
+    className="border border-white/10 rounded-2xl px-4 py-4 space-y-3 relative overflow-hidden"
+    style={{
+      background: `linear-gradient(135deg, ${station.color}33, #050515 60%)`,
+    }}
+                >
                     {/* Station header */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">

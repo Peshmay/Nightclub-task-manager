@@ -124,10 +124,13 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
               const progress = getStationProgress(station.id);
               return (
                 <button
-                  key={station.id}
-                  onClick={() => handleStationClick(station.id)}
-                  className="w-full text-left rounded-2xl border border-slate-700/70 bg-cardDark/80 px-4 py-4 hover:border-neonPurple/60 hover:bg-cardDark transition relative overflow-hidden"
-                >
+  key={station.id}
+  onClick={() => handleStationClick(station.id)}
+  className="w-full text-left rounded-2xl border border-slate-700/70 px-4 py-4 hover:border-neonPurple/60 transition relative overflow-hidden"
+  style={{
+    background: `linear-gradient(135deg, ${station.color}33, #020617 60%)`,
+  }}
+>
                   <div
                     className="absolute inset-y-0 left-0 w-1"
                     style={{ backgroundColor: station.color }}

@@ -108,35 +108,35 @@ const StationPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-bgDark via-black to-bgDark text-white">
       <div className="max-w-xl mx-auto px-6 pt-6 pb-20">
-        <header className="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-3">
-          <button
-            onClick={back}
-            className="text-slate-300 hover:text-white text-sm"
-          >
-            ← Back
-          </button>
-          <div className="flex items-center gap-2">
-            <span
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: station.color }}
-            />
-            <h1 className="font-semibold">{station.name}</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowChat((v) => !v)}
-              className="text-sm text-slate-300 hover:text-neonPurple"
-            >
-              💬
-            </button>
-            <button
-              onClick={handleLogout}
-              className="px-3 py-1 rounded-lg bg-slate-900/80 border border-slate-600 text-xs hover:bg-slate-800"
-            >
-              Logout
-            </button>
-          </div>
-        </header>
+        <header
+  className="flex items-center justify-between mb-4 border border-slate-700/60 rounded-2xl px-3 py-3 bg-black/60"
+  style={{
+    background: `linear-gradient(135deg, ${station.color}33, #020617 60%)`,
+  }}
+>
+  <button onClick={back} className="text-slate-100 hover:text-white text-sm">
+    ← Back
+  </button>
+  <div className="flex items-center gap-2">
+    <span
+      className="w-3 h-3 rounded-full"
+      style={{ backgroundColor: station.color }}
+    />
+    <h1 className="font-semibold">{station.name}</h1>
+  </div>
+    <button
+      onClick={() => setShowChat((v) => !v)}
+      className="text-sm text-slate-100 hover:text-neonPurple"
+    >
+      💬
+    </button>
+    <button
+      onClick={handleLogout}
+      className="px-3 py-1 rounded-lg bg-slate-900/80 border border-slate-600 text-xs hover:bg-slate-800"
+    >
+      Logout
+    </button>
+  </header>
 
         {showChat ? (
           <div>
