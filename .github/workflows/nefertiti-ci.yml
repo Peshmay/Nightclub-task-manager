@@ -2,9 +2,9 @@ name: Nefertiti CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-test:
@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [18.x]
 
     steps:
       - name: Checkout repository
@@ -22,13 +22,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
 
-      # ---------------- FRONTEND ----------------
+      # ---------- FRONTEND ----------
       - name: Install frontend dependencies
         working-directory: ./frontend
-        run: npm install
+        run: npm ci
 
-      - name: ESLint (frontend)
+      - name: Lint frontend
         working-directory: ./frontend
         run: npm run lint
 
@@ -36,12 +37,12 @@ jobs:
         working-directory: ./frontend
         run: npm test -- --ci --watchAll=false
 
-      # ---------------- BACKEND ----------------
+      # ---------- BACKEND ----------
       - name: Install backend dependencies
         working-directory: ./backend
-        run: npm install
+        run: npm ci
 
-      - name: ESLint (backend)
+      - name: Lint backend
         working-directory: ./backend
         run: npm run lint
 
