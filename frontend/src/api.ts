@@ -1,6 +1,7 @@
 import { TaskCategory, Station, Task, Message, AppSettings, Workspace } from './types';
 
 const API_BASE = '/api';
+import.meta.env.VITE_API_BASE_URL || '/api';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
