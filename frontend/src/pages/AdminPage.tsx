@@ -52,8 +52,6 @@ const AdminPage: React.FC = () => {
   } = useApp();
 
   const nav = useNavigate();
-  const userEmail =
-    auth.currentUser?.email?.trim().toLowerCase() ?? "manager@nefertiti.com";
 
   const scoreboard = useMemo(() => getScoreboard(), [getScoreboard]);
 

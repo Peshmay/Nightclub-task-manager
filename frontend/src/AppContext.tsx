@@ -1,5 +1,6 @@
-// AppContext.tsx
-import React, {
+// frontend/src/AppContext.tsx
+import React,
+{
   createContext,
   useCallback,
   useContext,
@@ -31,12 +32,12 @@ interface AppContextValue {
 
   setWorkspaceId: (id: string | null) => void;
 
-   addStation: (name: string, color: string, assignees?: string[]) => Promise<void>;
+  addStation: (name: string, color: string, assignees?: string[]) => Promise<void>;
   updateStation: (
     id: string,
     data: { name?: string; color?: string; assignees?: string[] }
   ) => Promise<void>;
-deleteStation: (id: string) => Promise<void>;
+  deleteStation: (id: string) => Promise<void>;
 
   addTask: (
     stationId: string,
@@ -46,14 +47,14 @@ deleteStation: (id: string) => Promise<void>;
   toggleTask: (id: string) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   clearAllTasks: () => Promise<void>;
- clearAllMessages: () => Promise<void>;
+
   sendMessage: (
     text: string,
     stationId: string | null,
     fromSupervisor: boolean,
     replyTo?: string
   ) => Promise<void>;
- 
+  clearAllMessages: () => Promise<void>;
 
   verifyPassword: (password: string) => boolean;
   changePassword: (newPassword: string) => Promise<void>;
@@ -69,25 +70,24 @@ const AppContext = createContext<AppContextValue | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [workspaceId, setWorkspaceIdState] = useState<string | null>(null);
+  // --- CORE STATE ---
+
+  // ✅ Initialize workspaceId directly from localStorage instead of useEffect
+  const [workspaceId, setWorkspaceIdState] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("workspaceId");
+  });
+
   const [stations, setStations] = useState<Station[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [settings, setSettings] = useState<AppSettings | null>(null);
-  const [selectedStationId, setSelectedStationId] = useState<string | null>(
-    null
-  );
+  const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // no async loading here any more, so just false:
+  const [isLoading] = useState(false);
 
-  // Load workspace from localStorage on first mount
-  useEffect(() => {
-    const stored = localStorage.getItem("workspaceId");
-    if (stored) {
-      setWorkspaceIdState(stored);
-    }
-    setIsLoading(false);
-  }, []);
+  // --- WORKSPACE ID management ---
 
   const setWorkspaceId = useCallback((id: string | null) => {
     setWorkspaceIdState(id);
@@ -98,7 +98,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  // Polling for data when workspace is set
+  // --- POLLING LOOP FOR DATA ---
+
   useEffect(() => {
     if (!workspaceId) return;
     let cancelled = false;
@@ -130,6 +131,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [workspaceId]);
 
+  // --- REFRESH HELPERS ---
+
   const refreshTasks = useCallback(async () => {
     if (!workspaceId) return;
     const t = await api.getTasks(workspaceId);
@@ -154,38 +157,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setSettings(st);
   }, [workspaceId]);
 
-  // ---- Stations ----
+  // --- STATIONS ---
 
   const addStation = useCallback(
-  async (name: string, color: string, assignees?: string[]) => {
-    if (!workspaceId) return;
-    await api.addStation(workspaceId, name, color, assignees);
-    await refreshStations();
-  },
-  [workspaceId, refreshStations]
-);
-
+    async (name: string, color: string, assignees?: string[]) => {
+      if (!workspaceId) return;
+      await api.addStation(workspaceId, name, color, assignees);
+      await refreshStations();
+    },
+    [workspaceId, refreshStations]
+  );
 
   const updateStation = useCallback(
-  async (
-    id: string,
-    data: { name?: string; color?: string; assignees?: string[] }
-  ) => {
-    if (!workspaceId) return;
-    const station = stations.find((s) => s.id === id);
-    if (!station) return;
+    async (
+      id: string,
+      data: { name?: string; color?: string; assignees?: string[] }
+    ) => {
+      if (!workspaceId) return;
+      const station = stations.find((s) => s.id === id);
+      if (!station) return;
 
-    const name = data.name ?? station.name;
-    const color = data.color ?? station.color;
-    const assignees =
-      data.assignees ?? station.assignees ?? [];
+      const name = data.name ?? station.name;
+      const color = data.color ?? station.color;
+      const assignees = data.assignees ?? station.assignees ?? [];
 
-    await api.updateStation(workspaceId, id, name, color, assignees);
-    await refreshStations();
-  },
-  [workspaceId, refreshStations, stations]
-);
-
+      await api.updateStation(workspaceId, id, name, color, assignees);
+      await refreshStations();
+    },
+    [workspaceId, refreshStations, stations]
+  );
 
   const deleteStation = useCallback(
     async (id: string) => {
@@ -197,7 +197,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     [workspaceId, refreshStations, refreshTasks]
   );
 
-  // ---- Tasks ----
+  // --- TASKS ---
 
   const addTask = useCallback(
     async (
@@ -236,14 +236,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     await refreshTasks();
   }, [workspaceId, refreshTasks]);
 
-    const clearAllMessages = useCallback(async () => {
-    if (!workspaceId) return;
-    await api.clearAllMessages(workspaceId);
-    await refreshMessages();
-  }, [workspaceId, refreshMessages]);
-
-
-  // ---- Messages ----
+  // --- MESSAGES ---
 
   const sendMessage = useCallback(
     async (
@@ -265,8 +258,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     [workspaceId, refreshMessages]
   );
 
-  
-  // ---- Admin password (for in-app admin panel) ----
+  const clearAllMessages = useCallback(async () => {
+    if (!workspaceId) return;
+    await api.clearMessages(workspaceId);
+    await refreshMessages();
+  }, [workspaceId, refreshMessages]);
+
+  // --- ADMIN PASSWORD ---
 
   const verifyPassword = useCallback(
     (password: string): boolean => {
@@ -285,7 +283,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     [workspaceId, refreshSettings]
   );
 
-  // ---- Scoreboard ----
+  // --- SCOREBOARD ---
 
   const getScoreboard = useCallback((): StationScore[] => {
     return stations
@@ -303,7 +301,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       .sort((a, b) => b.points - a.points);
   }, [stations, tasks]);
 
-  // ---- UI mode helpers ----
+  // --- UI MODE HELPERS ---
 
   const selectStation = useCallback((stationId: string | null) => {
     setSelectedStationId(stationId);
@@ -319,6 +317,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsAdmin(false);
     setSelectedStationId(null);
   }, []);
+
+  // --- CONTEXT VALUE ---
 
   const value: AppContextValue = useMemo(
     () => ({
@@ -371,6 +371,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       deleteTask,
       clearAllTasks,
       sendMessage,
+      clearAllMessages, // ✅ include this
       verifyPassword,
       changePassword,
       getScoreboard,
