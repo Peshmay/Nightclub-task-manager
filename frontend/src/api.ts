@@ -1,18 +1,16 @@
 import type { TaskCategory, Station, Task, Message, AppSettings, Workspace } from './types';
 
 /**
- * VITE_API_BASE_URL should be your backend ORIGIN, e.g:
- * - http://localhost:4001   (local)
- * - https://nefertiti-backend.onrender.com (Render)
+ * Set VITE_API_BASE_URL to your backend ORIGIN (no /api), e.g:
+ * - http://localhost:4001
+ * - https://nefertiti-backend.onrender.com
  *
- * If it is not set, we fall back to "/api" (works only if you use a proxy/rewrite).
+ * This file will automatically call `${ORIGIN}/api/...`
  */
-const API_ORIGIN = import.meta.env.VITE_API_BASE_URL as string | undefined;
+const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001') as string;
 
-// Final base used by fetch:
-// - If API_ORIGIN exists: "https://backend.../api"
-// - Else: "/api"
-const API_BASE = API_ORIGIN ? `${API_ORIGIN.replace(/\/$/, '')}/api` : '/api';
+// Backend routes are mounted on /api in index.ts
+const API_BASE = `${API_ORIGIN.replace(/\/$/, '')}/api`;
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -25,13 +23,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     throw new Error(text || res.statusText);
   }
 
-  // Some endpoints might return empty bodies in future; guard JSON parse
+  // Safe JSON parsing
   const contentType = res.headers.get('content-type') || '';
   if (!contentType.includes('application/json')) {
     return (await res.text()) as T;
   }
-
-  return res.json();
+  return res.json() as Promise<T>;
 }
 
 export const api = {
@@ -60,13 +57,13 @@ export const api = {
     color: string,
     assignees?: string[],
   ) =>
-    request('/stations/' + id, {
+    request<{ ok: true }>(`/stations/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ workspaceId, name, color, assignees }),
     }),
 
   deleteStation: (workspaceId: string, id: string) =>
-    request(`/stations/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
+    request<{ ok: true }>(`/stations/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
       method: 'DELETE',
     }),
 
@@ -81,18 +78,18 @@ export const api = {
     }),
 
   toggleTask: (workspaceId: string, id: string) =>
-    request('/tasks/toggle', {
+    request<{ ok: true }>('/tasks/toggle', {
       method: 'POST',
       body: JSON.stringify({ workspaceId, id }),
     }),
 
   deleteTask: (workspaceId: string, id: string) =>
-    request(`/tasks/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
+    request<{ ok: true }>(`/tasks/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
       method: 'DELETE',
     }),
 
   clearAllTasks: (workspaceId: string) =>
-    request('/tasks/clear-all', {
+    request<{ ok: true }>('/tasks/clear-all', {
       method: 'POST',
       body: JSON.stringify({ workspaceId }),
     }),
@@ -120,7 +117,7 @@ export const api = {
     }),
 
   clearAllMessages: (workspaceId: string) =>
-    request('/messages/clear-all', {
+    request<{ ok: true }>('/messages/clear-all', {
       method: 'POST',
       body: JSON.stringify({ workspaceId }),
     }),
@@ -130,7 +127,7 @@ export const api = {
     request<AppSettings>(`/settings?workspaceId=${encodeURIComponent(workspaceId)}`),
 
   updatePassword: (workspaceId: string, newPassword: string) =>
-    request('/settings/password', {
+    request<{ ok: true }>('/settings/password', {
       method: 'POST',
       body: JSON.stringify({ workspaceId, newPassword }),
     }),
