@@ -1,3 +1,4 @@
+import type { Request, Response } from 'express';
 import express from 'express';
 import { db } from './database';
 import {
@@ -15,7 +16,7 @@ import { Task } from './types';
 
 export const router = express.Router();
 
-router.get('/health', (_req, res) => {
+router.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok' });
 });
 
