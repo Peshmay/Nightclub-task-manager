@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "lib": [
+      "es2020"
+    ],
+    "types": [
+      "node"
+    ],
     "target": "ES2019",
     "noImplicitAny": false,
     "module": "commonjs",
