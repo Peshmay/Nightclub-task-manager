@@ -74,9 +74,9 @@ const StationPage: React.FC = () => {
     () =>
       messages.filter(
         (m) =>
-          // Messages targeted at this station OR broadcast (stationId === null)
           (!activeStation && m.stationId === null) ||
-          (activeStation && (m.stationId === null || m.stationId === activeStation.id))
+          (activeStation &&
+            (m.stationId === null || m.stationId === activeStation.id))
       ),
     [messages, activeStation]
   );
@@ -107,6 +107,13 @@ const StationPage: React.FC = () => {
     selectStation(id);
   };
 
+  // ✅ BACK button: return to Home station list
+  const handleBackHome = () => {
+    // optional: clear selection so next time we don’t force one station
+    selectStation(null);
+    nav("/zone");
+  };
+
   const isAdminUser = userEmail === "manager@nefertiti.com";
 
   // --- render ---
@@ -117,12 +124,21 @@ const StationPage: React.FC = () => {
         <p className="mb-4 text-sm text-slate-300">
           No stations assigned yet. Ask admin to assign your email to a station.
         </p>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 text-xs rounded-lg bg-slate-800 border border-slate-600 hover:bg-slate-700"
-        >
-          Logout
-        </button>
+
+        <div className="flex gap-2">
+          <button
+            onClick={handleBackHome}
+            className="px-4 py-2 text-xs rounded-lg bg-slate-800 border border-slate-600 hover:bg-slate-700"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-xs rounded-lg bg-slate-900 border border-slate-600 hover:bg-slate-800"
+          >
+            Logout
+          </button>
+        </div>
       </div>
     );
   }
@@ -131,16 +147,28 @@ const StationPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#050510] via-[#11091f] to-[#050510] text-white">
       {/* HEADER */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/10">
-        <div className="flex items-center gap-2">
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: activeStation.color }}
-          />
-          <div>
-            <h1 className="text-lg font-semibold">{activeStation.name}</h1>
-            <p className="text-[11px] text-slate-400">
-              Logged in as <span className="font-mono">{userEmail}</span>
-            </p>
+        <div className="flex items-center gap-3">
+          {/* ✅ Back arrow */}
+          <button
+            onClick={handleBackHome}
+            className="px-3 py-1 rounded-lg bg-slate-900/80 border border-slate-600 text-xs hover:bg-slate-800"
+            aria-label="Back"
+            title="Back"
+          >
+            ← Back
+          </button>
+
+          <div className="flex items-center gap-2">
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: activeStation.color }}
+            />
+            <div>
+              <h1 className="text-lg font-semibold">{activeStation.name}</h1>
+              <p className="text-[11px] text-slate-400">
+                Logged in as <span className="font-mono">{userEmail}</span>
+              </p>
+            </div>
           </div>
         </div>
 
@@ -241,9 +269,7 @@ const StationPage: React.FC = () => {
 
         {/* RIGHT: messages */}
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-100">
-            Messages
-          </h2>
+          <h2 className="text-sm font-semibold text-slate-100">Messages</h2>
 
           <div className="h-64 md:h-72 bg-black/30 border border-white/10 rounded-2xl p-3 overflow-y-auto space-y-2 flex flex-col-reverse">
             {stationMessages.length === 0 ? (
@@ -267,15 +293,13 @@ const StationPage: React.FC = () => {
                           : "bg-slate-700/80 text-slate-200 rounded-br-none"
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <span
-                          className={`text-[9px] font-bold ${
-                            isAdmin ? "text-cyan-200" : "text-purple-200"
-                          }`}
-                        >
-                          {isAdmin ? "ADMIN" : "YOU"}
-                        </span>
-                      </div>
+                      <span
+                        className={`text-[9px] font-bold ${
+                          isAdmin ? "text-cyan-200" : "text-purple-200"
+                        }`}
+                      >
+                        {isAdmin ? "ADMIN" : "YOU"}
+                      </span>
                       <p className="mt-1 whitespace-pre-wrap">{msg.text}</p>
                     </div>
                   </div>

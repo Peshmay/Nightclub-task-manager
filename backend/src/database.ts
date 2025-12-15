@@ -1,19 +1,12 @@
-import {
-  Workspace,
-  Station,
-  Task,
-  Message,
-  AppSettings,
-  TaskCategory,
-} from "./types";
+import { Workspace, Station, Task, Message, AppSettings, TaskCategory } from './types';
 
-const DEFAULT_PASSWORD = "9999";
+const DEFAULT_PASSWORD = '9999';
 
-export const DEFAULT_STATIONS: Omit<Station, "workspaceId">[] = [
-  { id: "1", name: "Bar", color: "#a855f7" },
-  { id: "2", name: "Entrance", color: "#06b6d4" },
-  { id: "3", name: "Washing Room", color: "#ec4899" },
-  { id: "4", name: "Kitchen", color: "#f59e0b" },
+export const DEFAULT_STATIONS: Omit<Station, 'workspaceId'>[] = [
+  { id: '1', name: 'Bar', color: '#a855f7' },
+  { id: '2', name: 'Entrance', color: '#06b6d4' },
+  { id: '3', name: 'Washing Room', color: '#ec4899' },
+  { id: '4', name: 'Kitchen', color: '#f59e0b' },
 ];
 
 export class Database {
@@ -32,7 +25,7 @@ export class Database {
     this.workspaces.set(workspace.id, workspace);
     this.stations.set(
       workspace.id,
-      DEFAULT_STATIONS.map((s) => ({ ...s, workspaceId: workspace.id }))
+      DEFAULT_STATIONS.map((s) => ({ ...s, workspaceId: workspace.id })),
     );
     this.tasks.set(workspace.id, []);
     this.messages.set(workspace.id, []);
@@ -61,12 +54,7 @@ export class Database {
     this.stations.set(workspaceId, workspaceStations);
   }
 
-  updateStation(
-    workspaceId: string,
-    id: string,
-    name: string,
-    color: string
-  ): void {
+  updateStation(workspaceId: string, id: string, name: string, color: string): void {
     const workspaceStations = this.stations.get(workspaceId) || [];
     const index = workspaceStations.findIndex((s) => s.id === id);
     if (index !== -1) {
@@ -79,12 +67,12 @@ export class Database {
     const workspaceStations = this.stations.get(workspaceId) || [];
     this.stations.set(
       workspaceId,
-      workspaceStations.filter((s) => s.id !== id)
+      workspaceStations.filter((s) => s.id !== id),
     );
     const workspaceTasks = this.tasks.get(workspaceId) || [];
     this.tasks.set(
       workspaceId,
-      workspaceTasks.filter((t) => t.stationId !== id)
+      workspaceTasks.filter((t) => t.stationId !== id),
     );
   }
 
@@ -111,7 +99,7 @@ export class Database {
     const workspaceTasks = this.tasks.get(workspaceId) || [];
     this.tasks.set(
       workspaceId,
-      workspaceTasks.filter((t) => t.id !== id)
+      workspaceTasks.filter((t) => t.id !== id),
     );
   }
 
@@ -123,7 +111,7 @@ export class Database {
         ...t,
         completed: false,
         completedAt: undefined,
-      }))
+      })),
     );
   }
 
@@ -136,9 +124,8 @@ export class Database {
     workspaceMessages.push(message);
     this.messages.set(workspaceId, workspaceMessages);
   }
-
-  clearMessages(workspaceId: string) {
-    this.messages.delete(workspaceId);
+  clearMessages(workspaceId: string): void {
+    this.messages.set(workspaceId, []);
   }
 
   getSettings(workspaceId: string): AppSettings {

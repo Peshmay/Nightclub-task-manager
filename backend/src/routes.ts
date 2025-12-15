@@ -1,5 +1,5 @@
-import express from "express";
-import { db } from "./database";
+import express from 'express';
+import { db } from './database';
 import {
   workspaceCreateSchema,
   workspaceIdSchema,
@@ -10,21 +10,21 @@ import {
   taskToggleSchema,
   messageCreateSchema,
   passwordUpdateSchema,
-} from "./schemas";
-import { Task } from "./types";
+} from './schemas';
+import { Task } from './types';
 
 export const router = express.Router();
 
-router.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+router.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
 });
 
 // Workspaces
-router.get("/workspaces", (_req, res) => {
+router.get('/workspaces', (_req, res) => {
   res.json(db.getAllWorkspaces());
 });
 
-router.post("/workspaces", (req, res) => {
+router.post('/workspaces', (req, res) => {
   const parse = workspaceCreateSchema.safeParse(req.body);
   if (!parse.success) {
     return res.status(400).json(parse.error.flatten());
@@ -34,13 +34,13 @@ router.post("/workspaces", (req, res) => {
 });
 
 // Stations
-router.get("/stations", (req, res) => {
+router.get('/stations', (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.query);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   res.json(db.getStations(parse.data.workspaceId));
 });
 
-router.post("/stations", (req, res) => {
+router.post('/stations', (req, res) => {
   const parse = stationCreateSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   const { workspaceId, name, color } = parse.data;
@@ -49,12 +49,14 @@ router.post("/stations", (req, res) => {
     workspaceId,
     name,
     color,
+    assignees: [],
   };
+
   db.addStation(workspaceId, station);
   res.status(201).json(station);
 });
 
-router.put("/stations/:id", (req, res) => {
+router.put('/stations/:id', (req, res) => {
   const params = workspaceIdSchema.extend(idSchema.shape).safeParse({
     workspaceId: req.body.workspaceId,
     id: req.params.id,
@@ -67,16 +69,11 @@ router.put("/stations/:id", (req, res) => {
     color: req.body.color,
   });
   if (!body.success) return res.status(400).json(body.error.flatten());
-  db.updateStation(
-    body.data.workspaceId,
-    body.data.id,
-    body.data.name,
-    body.data.color
-  );
+  db.updateStation(body.data.workspaceId, body.data.id, body.data.name, body.data.color);
   res.json({ ok: true });
 });
 
-router.delete("/stations/:id", (req, res) => {
+router.delete('/stations/:id', (req, res) => {
   const params = workspaceIdSchema.extend(idSchema.shape).safeParse({
     workspaceId: req.query.workspaceId,
     id: req.params.id,
@@ -87,13 +84,13 @@ router.delete("/stations/:id", (req, res) => {
 });
 
 // Tasks
-router.get("/tasks", (req, res) => {
+router.get('/tasks', (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.query);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   res.json(db.getTasks(parse.data.workspaceId));
 });
 
-router.post("/tasks", (req, res) => {
+router.post('/tasks', (req, res) => {
   const parse = taskCreateSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   const { workspaceId, stationId, title, category } = parse.data;
@@ -110,12 +107,12 @@ router.post("/tasks", (req, res) => {
   res.status(201).json(task);
 });
 
-router.post("/tasks/toggle", (req, res) => {
+router.post('/tasks/toggle', (req, res) => {
   const parse = taskToggleSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   const tasks = db.getTasks(parse.data.workspaceId);
   const task = tasks.find((t) => t.id === parse.data.id);
-  if (!task) return res.status(404).json({ error: "Task not found" });
+  if (!task) return res.status(404).json({ error: 'Task not found' });
   db.updateTask(parse.data.workspaceId, task.id, {
     completed: !task.completed,
     completedAt: !task.completed ? Date.now() : undefined,
@@ -123,7 +120,7 @@ router.post("/tasks/toggle", (req, res) => {
   res.json({ ok: true });
 });
 
-router.delete("/tasks/:id", (req, res) => {
+router.delete('/tasks/:id', (req, res) => {
   const params = workspaceIdSchema.extend(idSchema.shape).safeParse({
     workspaceId: req.query.workspaceId,
     id: req.params.id,
@@ -133,7 +130,7 @@ router.delete("/tasks/:id", (req, res) => {
   res.json({ ok: true });
 });
 
-router.post("/tasks/clear-all", (req, res) => {
+router.post('/tasks/clear-all', (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   db.clearAllTasks(parse.data.workspaceId);
@@ -142,13 +139,13 @@ router.post("/tasks/clear-all", (req, res) => {
 
 // Messages
 // Messages
-router.get("/messages", (req, res) => {
+router.get('/messages', (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.query);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   res.json(db.getMessages(parse.data.workspaceId));
 });
 
-router.post("/messages", (req, res) => {
+router.post('/messages', (req, res) => {
   const parse = messageCreateSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   const { workspaceId, stationId, text, fromSupervisor, replyTo } = parse.data;
@@ -166,7 +163,7 @@ router.post("/messages", (req, res) => {
 });
 
 // NEW: clear all messages for a workspace
-router.post("/messages/clear-all", (req, res) => {
+router.post('/messages/clear-all', (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   db.clearMessages(parse.data.workspaceId);
@@ -174,13 +171,13 @@ router.post("/messages/clear-all", (req, res) => {
 });
 
 // Settings
-router.get("/settings", (req, res) => {
+router.get('/settings', (req, res) => {
   const parse = workspaceIdSchema.safeParse(req.query);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   res.json(db.getSettings(parse.data.workspaceId));
 });
 
-router.post("/settings/password", (req, res) => {
+router.post('/settings/password', (req, res) => {
   const parse = passwordUpdateSchema.safeParse(req.body);
   if (!parse.success) return res.status(400).json(parse.error.flatten());
   db.updatePassword(parse.data.workspaceId, parse.data.newPassword);
