@@ -1,16 +1,13 @@
+// frontend/src/api.ts
 import type { TaskCategory, Station, Task, Message, AppSettings, Workspace } from './types';
 
 /**
- * Set VITE_API_BASE_URL to your backend ORIGIN (no /api), e.g:
+ * VITE_API_BASE_URL should be your backend ORIGIN, e.g:
  * - http://localhost:4001
- * - https://nefertiti-backend.onrender.com
- *
- * This file will automatically call `${ORIGIN}/api/...`
+ * - https://your-backend.onrender.com
  */
-const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001') as string;
-
-// Backend routes are mounted on /api in index.ts
-const API_BASE = `${API_ORIGIN.replace(/\/$/, '')}/api`;
+const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '');
+const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : 'http://localhost:4001/api';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -23,12 +20,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     throw new Error(text || res.statusText);
   }
 
-  // Safe JSON parsing
-  const contentType = res.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
-    return (await res.text()) as T;
-  }
-  return res.json() as Promise<T>;
+  return res.json();
 }
 
 export const api = {
@@ -57,13 +49,13 @@ export const api = {
     color: string,
     assignees?: string[],
   ) =>
-    request<{ ok: true }>(`/stations/${id}`, {
+    request(`/stations/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ workspaceId, name, color, assignees }),
     }),
 
   deleteStation: (workspaceId: string, id: string) =>
-    request<{ ok: true }>(`/stations/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
+    request(`/stations/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
       method: 'DELETE',
     }),
 
@@ -78,18 +70,18 @@ export const api = {
     }),
 
   toggleTask: (workspaceId: string, id: string) =>
-    request<{ ok: true }>('/tasks/toggle', {
+    request('/tasks/toggle', {
       method: 'POST',
       body: JSON.stringify({ workspaceId, id }),
     }),
 
   deleteTask: (workspaceId: string, id: string) =>
-    request<{ ok: true }>(`/tasks/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
+    request(`/tasks/${id}?workspaceId=${encodeURIComponent(workspaceId)}`, {
       method: 'DELETE',
     }),
 
   clearAllTasks: (workspaceId: string) =>
-    request<{ ok: true }>('/tasks/clear-all', {
+    request('/tasks/clear-all', {
       method: 'POST',
       body: JSON.stringify({ workspaceId }),
     }),
@@ -107,17 +99,11 @@ export const api = {
   ) =>
     request<Message>('/messages', {
       method: 'POST',
-      body: JSON.stringify({
-        workspaceId,
-        text,
-        stationId,
-        fromSupervisor,
-        replyTo,
-      }),
+      body: JSON.stringify({ workspaceId, text, stationId, fromSupervisor, replyTo }),
     }),
 
   clearAllMessages: (workspaceId: string) =>
-    request<{ ok: true }>('/messages/clear-all', {
+    request('/messages/clear-all', {
       method: 'POST',
       body: JSON.stringify({ workspaceId }),
     }),
@@ -127,7 +113,7 @@ export const api = {
     request<AppSettings>(`/settings?workspaceId=${encodeURIComponent(workspaceId)}`),
 
   updatePassword: (workspaceId: string, newPassword: string) =>
-    request<{ ok: true }>('/settings/password', {
+    request('/settings/password', {
       method: 'POST',
       body: JSON.stringify({ workspaceId, newPassword }),
     }),
