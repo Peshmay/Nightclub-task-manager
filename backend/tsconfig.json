@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "es2020"
-    ],
+    "ignoreDeprecations": "6.0",
     "types": [
       "node"
     ],

@@ -7,19 +7,14 @@ import type { TaskCategory, Station, Task, Message, AppSettings, Workspace } fro
  * - https://your-backend.onrender.com
  */
 const API_ORIGIN = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001';
-const API_BASE = `${API_ORIGIN.replace(/\/$/, '')}/api`;
+const API_BASE = `${API_ORIGIN}/api`;
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || res.statusText);
-  }
-
+  if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
 
