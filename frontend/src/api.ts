@@ -6,8 +6,8 @@ import type { TaskCategory, Station, Task, Message, AppSettings, Workspace } fro
  * - http://localhost:4001
  * - https://your-backend.onrender.com
  */
-const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '');
-const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : 'http://localhost:4001/api';
+const API_ORIGIN = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4001';
+const API_BASE = `${API_ORIGIN.replace(/\/$/, '')}/api`;
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
