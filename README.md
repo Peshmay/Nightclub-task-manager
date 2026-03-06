@@ -1,95 +1,115 @@
+# Nightclub Task Manager
+
 # Nefertiti-task-app
 
-# Nefertiti Task App
+A task and communication system designed for nightclub staff operations.
 
-A simple task + message system for a nightclub team.
-
-- **Admin (manager)** creates stations and tasks
-- **Staff** sees only assigned stations (by email)
-- **Real-time style polling** (frontend refreshes every few seconds)
-- **Message board**: Admin ↔ Staff communication
-- **Admin PIN** stored per workspace (default: `1111`)
+Managers create stations and tasks while staff members view and complete tasks assigned to their station.  
+The system also includes a messaging board for communication between staff and management.
 
 ---
 
-## Project Structure
+## Screenshots
 
-Nefertiti-task-app/
-backend/ # Express + TypeScript REST API
-frontend/ # React + Vite + TypeScript UI
+### Admin Panel
 
-## Features
+![Admin Panel](screenshots/nefertiti.png)
 
-### Workspaces
+### Station Dashboard
 
-- Create multiple workspaces (e.g. different clubs or locations)
-- Workspace selection is stored in `localStorage` (`workspaceId`)
+![Station Dashboard](screenshots/nefertiti1.png)
 
-### Stations
+### Task Management
 
-- Station name + color
-- Optional staff assignment using emails (e.g. `bar1@nefertiti.com`)
-- Staff will only see stations assigned to their email
-  - If no stations are assigned for that email, staff sees all stations (fallback)
+![Task Management](screenshots/nefertiti2.png)
 
-### Tasks
+### Messaging System
 
-- Tasks belong to a station
-- Categories:
+![Messaging](screenshots/nefertiti4.png)
+
+### Adim Management
+
+![Task Management](screenshots/nefertiti3.png)
+
+---
+
+## Key Features
+
+### Staff
+
+- View tasks assigned to their station
+- Mark tasks as completed
+- Task categories:
   - Before Opening
   - Open Hours
   - Closing
-- Staff can mark tasks complete
-- Admin can clear all tasks (reset all completed tasks)
+- Send messages to the admin
+- View messages from management
 
-### Messages
+### Admin
 
-- Admin can broadcast to all stations or send to a specific station
-- Staff can reply to admin
-- Admin can clear messages per workspace
+- Create and manage stations
+- Create and assign tasks
+- Broadcast messages to all stations or specific ones
+- Clear messages
+- Reset tasks for a new shift
+- Workspace admin PIN protection
+
+---
+
+## Architecture
+
+The application follows a **full-stack client–server architecture**.
+
+React Frontend (Vite + Tailwind)
+│
+│ HTTP API
+▼
+Express Backend (TypeScript)
+│
+▼
+In-Memory Database
+
+External Services:
+
+- Firebase Authentication
+
+---
 
 ## Tech Stack
 
-**Frontend**
+### Frontend
 
-- React + TypeScript
+- React
+- TypeScript
 - Vite
-- Tailwind (utility styling)
-- Firebase Auth (login)
+- Tailwind CSS
+- Firebase Authentication
 
-**Backend**
+### Backend
 
-- Express + TypeScript
+- Node.js
+- Express
+- TypeScript
 - Zod validation
-- In-memory database (for now)
 
-## Local Development
+---
 
-1. Backend
-   cd backend
-   npm install
-   npm run dev
+## Project Purpose
 
-   This starts the API on http://localhost:4000
+This project demonstrates:
 
-2. Frontend
-   cd frontend
-   npm install
-   npm run dev
+- Full-stack TypeScript development
+- REST API design
+- Role-based task management systems
+- Authentication using Firebase
+- Dashboard-style UI applications
+- Clean modular project structure
 
-   This starts the web app on http://localhost:5173 (proxying /api to backend).
+---
 
-3. Firebase
-   Create frontend/.env with:
+## Future Improvements
 
-   VITE_FIREBASE_API_KEY=...
-   VITE_FIREBASE_AUTH_DOMAIN=...
-   VITE_FIREBASE_PROJECT_ID=...
-   VITE_FIREBASE_STORAGE_BUCKET=...
-   VITE_FIREBASE_MESSAGING_SENDER_ID=...
-   VITE_FIREBASE_APP_ID=...
-
-   These come from your Firebase project.
-
-Login uses Firebase email/password and Google sign-in.
-After login, you select a workspace, then you see the station selector and admin panel like in your mobile design, with a dark neon theme.
+- Replace in-memory storage with PostgreSQL + Prisma
+- Add WebSockets for real-time task updates
+- Add activity logs and audit trails

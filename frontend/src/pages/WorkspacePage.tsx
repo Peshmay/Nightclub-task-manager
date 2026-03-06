@@ -8,7 +8,10 @@ import { auth } from "../firebase";
 import { api } from "../api";
 import type { Workspace } from "../types";
 
-const WorkspacePage: React.FC<{ isAdmin?: boolean }> = ({ isAdmin }) => {
+const WorkspacePage: React.FC = () => {
+  const userEmail = auth.currentUser?.email?.trim().toLowerCase() ?? "";
+  const isAdminUser = userEmail === "manager@nefertiti.com";
+
   const nav = useNavigate();
   const { setWorkspaceId } = useApp();
 
@@ -140,7 +143,7 @@ const WorkspacePage: React.FC<{ isAdmin?: boolean }> = ({ isAdmin }) => {
         </div>
 
         {/* Create workspace (admin only) */}
-        {isAdmin && (
+        {isAdminUser && (
           <div className="rounded-2xl border border-neonPurple/60 bg-gradient-to-r from-neonPurple/20 to-neonCyan/10 px-4 py-5">
             <h2 className="text-lg font-semibold mb-2">
               Create New Workspace
@@ -170,7 +173,7 @@ const WorkspacePage: React.FC<{ isAdmin?: boolean }> = ({ isAdmin }) => {
           </div>
         )}
 
-        {!isAdmin && (
+        {!isAdminUser && (
           <p className="text-xs text-slate-500 mt-4">
             Only admins can create new workspaces. Ask your manager to add one
             for you.

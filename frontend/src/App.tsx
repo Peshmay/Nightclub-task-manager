@@ -77,15 +77,15 @@ const AppShell: React.FC = () => {
 
         {/* Workspace selection (both admin & staff use this once) */}
         <Route
-          path="/workspace"
-          element={
-            user ? (
-              <WorkspacePage isAdmin={isAdminUser} />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
+  path="/workspace"
+  element={
+    user ? (
+      <WorkspacePage isAdmin={isAdminUser} />
+    ) : (
+      <Navigate to="/" replace />
+    )
+  }
+/>
 
         {/* Staff: choose station */}
         <Route
