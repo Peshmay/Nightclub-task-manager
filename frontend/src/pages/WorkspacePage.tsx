@@ -1,16 +1,16 @@
 // src/pages/WorkspacePage.tsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
 
-import { useApp } from "../AppContext";
-import { auth } from "../firebase";
-import { api } from "../api";
-import type { Workspace } from "../types";
+import { useApp } from '../AppContext';
+import { auth } from '../firebase';
+import { api } from '../api';
+import type { Workspace } from '../types';
 
 const WorkspacePage: React.FC = () => {
-  const userEmail = auth.currentUser?.email?.trim().toLowerCase() ?? "";
-  const isAdminUser = userEmail === "manager@nefertiti.com";
+  const userEmail = auth.currentUser?.email?.trim().toLowerCase() ?? '';
+  const isAdminUser = userEmail === 'manager@nefertiti.com';
 
   const nav = useNavigate();
   const { setWorkspaceId } = useApp();
@@ -19,10 +19,10 @@ const WorkspacePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [workspaceName, setWorkspaceName] = useState("");
+  const [workspaceName, setWorkspaceName] = useState('');
   const [creating, setCreating] = useState(false);
 
-  // -------- LOAD WORKSPACES (REST, not tRPC) ----------
+  // LOAD WORKSPACES
   const loadWorkspaces = async () => {
     setLoading(true);
     setError(null);
@@ -30,8 +30,8 @@ const WorkspacePage: React.FC = () => {
       const data = await api.getWorkspaces();
       setWorkspaces(data);
     } catch (err) {
-      console.error("Failed to load workspaces", err);
-      setError("Could not load workspaces from server.");
+      console.error('Failed to load workspaces', err);
+      setError('Could not load workspaces from server.');
     } finally {
       setLoading(false);
     }
@@ -44,11 +44,11 @@ const WorkspacePage: React.FC = () => {
   const handleSelectWorkspace = async (id: string) => {
     try {
       setWorkspaceId(id);
-      localStorage.setItem("workspaceId", id);
-      nav("/zone", { replace: true });
+      localStorage.setItem('workspaceId', id);
+      nav('/zone', { replace: true });
     } catch (err) {
-      console.error("Failed to select workspace", err);
-      alert("Could not select workspace");
+      console.error('Failed to select workspace', err);
+      alert('Could not select workspace');
     }
   };
 
@@ -63,12 +63,12 @@ const WorkspacePage: React.FC = () => {
       // add new one to list + auto-select
       setWorkspaces((prev) => [...prev, workspace]);
       setWorkspaceId(workspace.id);
-      localStorage.setItem("workspaceId", workspace.id);
-      setWorkspaceName("");
-      nav("/zone", { replace: true });
+      localStorage.setItem('workspaceId', workspace.id);
+      setWorkspaceName('');
+      nav('/zone', { replace: true });
     } catch (err) {
-      console.error("Create workspace error", err);
-      alert("Could not create workspace");
+      console.error('Create workspace error', err);
+      alert('Could not create workspace');
     } finally {
       setCreating(false);
     }
@@ -81,8 +81,8 @@ const WorkspacePage: React.FC = () => {
       console.error(e);
     }
     setWorkspaceId(null);
-    localStorage.removeItem("workspaceId");
-    nav("/", { replace: true });
+    localStorage.removeItem('workspaceId');
+    nav('/', { replace: true });
   };
 
   return (
@@ -92,8 +92,7 @@ const WorkspacePage: React.FC = () => {
         <header className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <span className="text-neonPurple text-3xl">✦</span>{" "}
-              Select Workspace
+              <span className="text-neonPurple text-3xl"></span> Select Workspace
             </h1>
             <p className="text-slate-400 mt-2">
               Choose your nightclub. Your manager creates workspaces for you.
@@ -131,10 +130,8 @@ const WorkspacePage: React.FC = () => {
                 <div className="flex-1">
                   <div className="font-semibold text-lg">{ws.name}</div>
                   <div className="text-xs text-slate-400">
-                    Created{" "}
-                    {ws.createdAt
-                      ? new Date(ws.createdAt).toLocaleDateString()
-                      : "recently"}
+                    Created{' '}
+                    {ws.createdAt ? new Date(ws.createdAt).toLocaleDateString() : 'recently'}
                   </div>
                 </div>
               </button>
@@ -145,16 +142,11 @@ const WorkspacePage: React.FC = () => {
         {/* Create workspace (admin only) */}
         {isAdminUser && (
           <div className="rounded-2xl border border-neonPurple/60 bg-gradient-to-r from-neonPurple/20 to-neonCyan/10 px-4 py-5">
-            <h2 className="text-lg font-semibold mb-2">
-              Create New Workspace
-            </h2>
+            <h2 className="text-lg font-semibold mb-2">Create New Workspace</h2>
             <p className="text-xs text-slate-300 mb-3">
               Example: <span className="italic">Club Nefertiti</span>
             </p>
-            <form
-              onSubmit={handleCreateWorkspace}
-              className="flex flex-col sm:flex-row gap-3"
-            >
+            <form onSubmit={handleCreateWorkspace} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 value={workspaceName}
@@ -167,7 +159,7 @@ const WorkspacePage: React.FC = () => {
                 disabled={creating || !workspaceName.trim()}
                 className="px-4 py-2 rounded-lg bg-neonPurple text-sm font-semibold hover:bg-neonPurple/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {creating ? "Creating…" : "Create"}
+                {creating ? 'Creating…' : 'Create'}
               </button>
             </form>
           </div>
@@ -175,8 +167,7 @@ const WorkspacePage: React.FC = () => {
 
         {!isAdminUser && (
           <p className="text-xs text-slate-500 mt-4">
-            Only admins can create new workspaces. Ask your manager to add one
-            for you.
+            Only admins can create new workspaces. Ask your manager to add one for you.
           </p>
         )}
       </div>

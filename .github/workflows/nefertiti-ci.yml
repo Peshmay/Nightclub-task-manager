@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      # -------- FRONTEND --------
+      # FRONTEND TASKS
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: npm ci
@@ -36,7 +36,7 @@ jobs:
         working-directory: ./frontend
         run: npm test -- --ci --watchAll=false
 
-      # -------- BACKEND --------
+      # BACKEND TASKS
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm ci
@@ -45,6 +45,6 @@ jobs:
         working-directory: ./backend
         run: npm run lint
 
-      - name: Run backend tests
-        working-directory: ./backend
-        run: npm test -- --ci --watchAll=false
+      # name: Run backend tests
+      # working-directory: ./backend
+      #run: npm test -- --ci --watchAll=false

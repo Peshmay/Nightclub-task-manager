@@ -1,9 +1,9 @@
 // src/pages/HomePage.tsx
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
-import { useApp } from "../AppContext";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
+import { useApp } from '../AppContext';
 
 const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const {
@@ -18,11 +18,11 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
   const nav = useNavigate();
   const [passwordModal, setPasswordModal] = useState(false);
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (!workspaceId) {
-      nav("/workspace", { replace: true });
+      nav('/workspace', { replace: true });
     }
   }, [workspaceId, nav]);
 
@@ -49,7 +49,7 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
   const handleStationClick = (id: string) => {
     selectStation(id);
-    nav("/station");
+    nav('/station');
   };
 
   const handleAdminClick = () => {
@@ -59,21 +59,21 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
   const handleAdminSubmit = () => {
     if (verifyPassword(password)) {
-      setPassword("");
+      setPassword('');
       setPasswordModal(false);
       enterAdminMode();
-      nav("/admin");
+      nav('/admin');
     } else {
-      alert("Incorrect password");
-      setPassword("");
+      alert('Incorrect password');
+      setPassword('');
     }
   };
 
   const handleLogout = async () => {
     await signOut(auth);
     setWorkspaceId(null);
-    localStorage.removeItem("workspaceId");
-    nav("/", { replace: true });
+    localStorage.removeItem('workspaceId');
+    nav('/', { replace: true });
   };
 
   return (
@@ -82,12 +82,12 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         <header className="mb-8 flex justify-between items-center gap-3">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <span className="text-neonPurple text-3xl">✦</span> Nightclub Manager
+              <span className="text-neonPurple text-3xl"></span> Nightclub Manager
             </h1>
             <p className="text-slate-400 mt-2">
               {isAdmin
-                ? "Select a station or open the admin panel."
-                : "Select your assigned station to see your tasks."}
+                ? 'Select a station or open the admin panel.'
+                : 'Select your assigned station to see your tasks.'}
             </p>
             {userEmail && (
               <p className="text-xs text-slate-500 mt-1">
@@ -124,13 +124,13 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
               const progress = getStationProgress(station.id);
               return (
                 <button
-  key={station.id}
-  onClick={() => handleStationClick(station.id)}
-  className="w-full text-left rounded-2xl border border-slate-700/70 px-4 py-4 hover:border-neonPurple/60 transition relative overflow-hidden"
-  style={{
-    background: `linear-gradient(135deg, ${station.color}33, #020617 60%)`,
-  }}
->
+                  key={station.id}
+                  onClick={() => handleStationClick(station.id)}
+                  className="w-full text-left rounded-2xl border border-slate-700/70 px-4 py-4 hover:border-neonPurple/60 transition relative overflow-hidden"
+                  style={{
+                    background: `linear-gradient(135deg, ${station.color}33, #020617 60%)`,
+                  }}
+                >
                   <div
                     className="absolute inset-y-0 left-0 w-1"
                     style={{ backgroundColor: station.color }}
@@ -139,11 +139,8 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-semibold text-lg">{station.name}</span>
                       <span className="text-sm text-slate-300">
-                        Points:{" "}
-                        <span
-                          style={{ color: station.color }}
-                          className="font-semibold"
-                        >
+                        Points:{' '}
+                        <span style={{ color: station.color }} className="font-semibold">
                           {progress.points}
                         </span>
                       </span>
@@ -179,7 +176,7 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAdminSubmit()}
+              onKeyDown={(e) => e.key === 'Enter' && handleAdminSubmit()}
               className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg mb-4"
               placeholder="Password"
               autoFocus
@@ -194,7 +191,7 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
               <button
                 onClick={() => {
                   setPasswordModal(false);
-                  setPassword("");
+                  setPassword('');
                 }}
                 className="flex-1 px-4 py-2 bg-slate-700 rounded-lg hover:bg-slate-600"
               >
