@@ -15,6 +15,10 @@ The system also includes a messaging board for communication between staff and m
 
 ![Admin Panel](screenshots/nefertiti.png)
 
+### Login
+
+![Login Page](screenshots/nefertiti0.png)
+
 ### Station Dashboard
 
 ![Station Dashboard](screenshots/nefertiti1.png)

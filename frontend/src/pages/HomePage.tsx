@@ -82,7 +82,7 @@ const HomePage: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         <header className="mb-8 flex justify-between items-center gap-3">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
-              <span className="text-neonPurple text-3xl"></span> Nightclub Manager
+              <span className="text-neonPurple text-3xl"></span> VenueFlow Manager
             </h1>
             <p className="text-slate-400 mt-2">
               {isAdmin

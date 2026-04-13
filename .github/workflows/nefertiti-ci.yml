@@ -45,6 +45,6 @@ jobs:
         working-directory: ./backend
         run: npm run lint
 
-      # name: Run backend tests
-      # working-directory: ./backend
-      #run: npm test -- --ci --watchAll=false
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test -- --ci --watchAll=false
